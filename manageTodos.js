@@ -5,6 +5,8 @@ const srcFolder = 'app/src';
 const docsFolder = 'docs';
 const todoDBPath = path.join(docsFolder, 'todoDB.json');
 const todosMDPath = path.join(docsFolder, 'todos.md');
+const githubRepoRoot = 'https://github.com/theronburger/github-action-test/blob/main';
+
 
 function searchForTodos(folder) {
   let todos = [];
@@ -53,6 +55,7 @@ function updateTodoDB(todos) {
     );
 
     if (!existingTodo) {
+      todo.timestamp = new Date().toISOString();
       todoDB.push(todo);
     }
   }
@@ -60,6 +63,7 @@ function updateTodoDB(todos) {
   for (const todo of todoDB) {
     if (!todo.done && !todos.some((t) => t.filePath === todo.filePath && t.line === todo.line)) {
       todo.done = true;
+      todo.completionTime = new Date().toISOString();
     }
   }
 
@@ -68,21 +72,45 @@ function updateTodoDB(todos) {
 }
 
 function renderTodosMD(todoDB) {
-    let mdContent = '# TODOs\n\n';
-  
-    for (const todo of todoDB) {
-      const strippedContent = todo.content.substring(todo.content.indexOf(':') + 1).trim();
-      mdContent += `- [${todo.done ? 'x' : ' '}] ${strippedContent} (${todo.filePath}:${todo.line})\n`;
-    }
-  
-    if (!fs.existsSync(docsFolder)) {
-      fs.mkdirSync(docsFolder);
-    }
-  
-    fs.writeFileSync(todosMDPath, mdContent, 'utf-8');
-  }
-  
+  let mdContent = '# TODOs\n\n';
 
+  // Sort todos by timestamp, newest to oldest
+  todoDB.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  // Group todos by file
+  const groupedTodos = todoDB.reduce((grouped, todo) => {
+    if (!grouped[todo.filePath]) {
+      grouped[todo.filePath] = [];
+    }
+    grouped[todo.filePath].push(todo);
+    return grouped;
+  }, {});
+
+  for (const filePath in groupedTodos) {
+    mdContent += `## ${filePath}\n\n`;
+
+    for (const todo of groupedTodos[filePath]) {
+      const strippedContent = todo.content.substring(todo.content.indexOf(':') + 1).trim();
+      const fileLink = `${githubRepoRoot}/${todo.filePath}#L${todo.line}`;
+      mdContent += `- [${todo.done ? 'x' : ' '}] ${strippedContent} ([link](${fileLink})) | Created: ${todo.timestamp}`;
+      
+      if (todo.done) {
+        mdContent += ` | Completed: ${todo.completionTime}`;
+      }
+
+      mdContent += `\n`;
+    }
+
+    mdContent += '\n';
+  }
+
+  if (!fs.existsSync(docsFolder)) {
+    fs.mkdirSync(docsFolder);
+  }
+
+  fs.writeFileSync(todosMDPath, mdContent, 'utf-8');
+}
+  
 const todos = searchForTodos(srcFolder);
 const todoDB = updateTodoDB(todos);
 renderTodosMD(todoDB);
