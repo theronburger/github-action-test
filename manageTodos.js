@@ -91,10 +91,14 @@ function renderTodosMD(todoDB) {
 
     for (const todo of groupedTodos[filePath]) {
       const strippedContent = todo.content.substring(todo.content.indexOf(':') + 1).trim();
-      const fileLink = `${githubRepoRoot}/${todo.filePath}#L${todo.line}`;
-      mdContent += `- [${todo.done ? 'x' : ' '}] ${strippedContent} ([link](${fileLink})) | Created: ${todo.timestamp}`;
-      
-      if (todo.done) {
+      const fileLink = `${githubRepoRoot}/${encodeURIComponent(todo.filePath).replace(/%2F/g, '/')}#L${todo.line}`;
+      mdContent += `- [${todo.done ? 'x' : ' '}] ${strippedContent} ([link](${fileLink}))`;
+
+      if (todo.timestamp) {
+        mdContent += ` | Created: ${todo.timestamp}`;
+      }
+
+      if (todo.done && todo.completionTime) {
         mdContent += ` | Completed: ${todo.completionTime}`;
       }
 
@@ -110,6 +114,7 @@ function renderTodosMD(todoDB) {
 
   fs.writeFileSync(todosMDPath, mdContent, 'utf-8');
 }
+
   
 const todos = searchForTodos(srcFolder);
 const todoDB = updateTodoDB(todos);

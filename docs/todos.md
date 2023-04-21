@@ -10,5 +10,5 @@
 
 ## app/src/a folder/a sub folder/a doc.md
 
-- [x] Make some nice docs! ([link](https://github.com/theronburger/github-action-test/blob/main/app/src/a folder/a sub folder/a doc.md#L1)) | Created: undefined | Completed: undefined
+- [x] Make some nice docs! ([link]("https://github.com/theronburger/github-action-test/blob/main/app/src/a folder/a sub folder/a doc.md#L1")) | Created: undefined | Completed: undefined
 
