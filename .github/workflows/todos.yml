@@ -13,6 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Delete existing TODO list
+        run: |
+          rm -f todo-list.txt
+
       - name: Generate TODO list
         run: |
           grep -r "TODO" . > todo-list.txt
