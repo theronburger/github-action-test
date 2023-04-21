@@ -15,6 +15,6 @@
     "filePath": "app/src/a folder/a sub folder/a doc.md",
     "line": 1,
     "content": "TODO: Make some nice docs!",
-    "done": false
+    "done": true
   }
 ]
