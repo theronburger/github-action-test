@@ -1,3 +1,6 @@
+# Remember to give github actions permission to write to the repo 
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#setting-the-permissions-of-the-github_token-for-your-repository
+
 name: Manage TODOs
 
 on:
