@@ -1,0 +1,24 @@
+name: Generate TODO List
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-todo-list:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Generate TODO list
+        run: |
+          grep -r "TODO" . > todo-list.txt
+
+      - name: Upload TODO list
+        uses: actions/upload-artifact@v2
+        with:
+          name: todo-list
+          path: todo-list.txt
