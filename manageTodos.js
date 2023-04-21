@@ -39,6 +39,10 @@ function searchForTodos(folder) {
 function updateTodoDB(todos) {
   let todoDB = [];
 
+  if (!fs.existsSync(docsFolder)) {
+    fs.mkdirSync(docsFolder);
+  }
+
   if (fs.existsSync(todoDBPath)) {
     todoDB = JSON.parse(fs.readFileSync(todoDBPath, 'utf-8'));
   }
