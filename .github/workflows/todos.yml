@@ -20,7 +20,7 @@ jobs:
           node-version: 16
 
       - name: Run manageTodos script
-        run: node ./manageTodos.js
+        run: node manageTodos.js
 
       - name: Set up Git credentials
         env:
@@ -32,7 +32,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git checkout -B docs
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add docs/todoDB.json docs/todos.md
-          git diff --quiet && git diff --staged --quiet || git commit -m "docs(todos): Action updating todos"
-          git push -u origin docs
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore(todos): Github action"
+          git push
