@@ -1,28 +1,29 @@
-name: Generate TODO List
+name: Manage TODOs
 
 on:
   push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
-  generate-todo-list:
+  manage_todos:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Delete existing TODO list
-        run: |
-          rm -f todo-list.txt
-
-      - name: Generate TODO list
-        run: |
-          grep -r "TODO" . > todo-list.txt
-
-      - name: Upload TODO list
-        uses: actions/upload-artifact@v2
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v2
         with:
-          name: todo-list
-          path: todo-list.txt
+          node-version: 16
+
+      - name: Run manageTodos script
+        run: node manageTodos.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/todoDB.json docs/todos.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore(todos): Github action"
+          git push
