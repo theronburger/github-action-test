@@ -46,7 +46,10 @@ function updateTodoDB(todos) {
   }
 
   if (fs.existsSync(todoDBPath)) {
-    todoDB = JSON.parse(fs.readFileSync(todoDBPath, 'utf-8'));
+    const fileContent = fs.readFileSync(todoDBPath, 'utf-8');
+    if (fileContent.trim()) {
+      todoDB = JSON.parse(fileContent);
+    }
   }
 
   for (const todo of todos) {
@@ -55,7 +58,6 @@ function updateTodoDB(todos) {
     );
 
     if (!existingTodo) {
-      todo.timestamp = new Date().toISOString();
       todoDB.push(todo);
     }
   }
@@ -63,13 +65,13 @@ function updateTodoDB(todos) {
   for (const todo of todoDB) {
     if (!todo.done && !todos.some((t) => t.filePath === todo.filePath && t.line === todo.line)) {
       todo.done = true;
-      todo.completionTime = new Date().toISOString();
     }
   }
 
   fs.writeFileSync(todoDBPath, JSON.stringify(todoDB, null, 2), 'utf-8');
   return todoDB;
 }
+
 
 function renderTodosMD(todoDB) {
   let mdContent = '# TODOs\n\n';
